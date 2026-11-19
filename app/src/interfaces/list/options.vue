@@ -25,7 +25,14 @@ const userStore = useUserStore();
 
 const repeaterValue = computed({
 	get() {
-		return props.value?.fields?.map((field: Field) => field.meta);
+		// Fields created through the API may not carry `field` / `name` in their meta, so take them from the
+		// field entry itself
+		return props.value?.fields?.map((field: Field) => ({
+			...field.meta,
+			field: field.field,
+			name: field.name,
+			type: field.type,
+		}));
 	},
 	set(newVal: FieldMeta[] | null) {
 		const fields = (newVal || []).map((meta: Record<string, any>) => ({
